@@ -31,6 +31,8 @@ public class PedidoController {
         public ResponseEntity<PedidoDto> listarPorId(@PathVariable @NotNull Long id) {
             PedidoDto dto = service.obterPorId(id);
 
+            service.enviarMensagem("testeMensagemJava") ;
+
             return  ResponseEntity.ok(dto);
         }
 

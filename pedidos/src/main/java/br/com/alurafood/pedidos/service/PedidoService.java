@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,11 @@ public class PedidoService {
 
     @Autowired
     private final ModelMapper modelMapper;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    private static final String QUEUE_NAME = "/queue/notificacao.enviar-email";
 
 
     public List<PedidoDto> obterTodos() {
@@ -73,5 +80,10 @@ public class PedidoService {
 
         pedido.setStatus(Status.PAGO);
         repository.atualizaStatus(Status.PAGO, pedido);
+    }
+
+    public void enviarMensagem(String mensagem) {
+
+        rabbitTemplate.convertAndSend( "notificacao.ex", QUEUE_NAME, mensagem);
     }
 }
